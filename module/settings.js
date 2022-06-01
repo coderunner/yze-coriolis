@@ -34,4 +34,28 @@ export const registerSystemSettings = function () {
     type: Boolean,
     default: false,
   });
+
+  game.settings.register("yzecoriolis", "useAlternativeInitiativeFormula", {
+    name: game.i18n.localize("YZECORIOLIS.SettingInitiative"),
+    hint: game.i18n.localize("YZECORIOLIS.SettingInitiativeHint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: applyCombatInitiativeSetting,
+  });
 };
+
+export function applyCombatInitiativeSetting() {
+  if (game.settings.get("yzecoriolis", "useAlternativeInitiativeFormula")) {
+    CONFIG.Combat.initiative = {
+      formula: "1d6+(1d6*0.1)",
+      decimals: 1,
+    };
+  } else {
+    CONFIG.Combat.initiative = {
+      formula: "1d6",
+      decimals: 0,
+    };
+  }
+}

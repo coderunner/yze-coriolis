@@ -1,6 +1,9 @@
 // Import Modules
 import { YZECORIOLIS } from "./config.js";
-import { registerSystemSettings } from "./settings.js";
+import {
+  registerSystemSettings,
+  applyCombatInitiativeSetting,
+} from "./settings.js";
 import { yzecoriolisActor } from "./actor/actor.js";
 import { yzecoriolisActorSheet } from "./actor/actor-sheet.js";
 import { yzecoriolisShipSheet } from "./actor/ship-sheet.js";
@@ -33,15 +36,6 @@ Hooks.once("init", async function () {
     rollItemMacro,
     config: YZECORIOLIS,
     migrations: migrations,
-  };
-
-  /**
-   * Set an initiative formula for the system
-   * @type {String}
-   */
-  CONFIG.Combat.initiative = {
-    formula: "1d6",
-    decimals: 0,
   };
 
   // Setup TinyMCE stylings
@@ -87,6 +81,8 @@ Hooks.once("init", async function () {
     makeDefault: true,
     label: "SheetClassItem",
   });
+
+  applyCombatInitiativeSetting();
 
   // register turn order changes. Currently it's sorting from high->low so no need to edit atm.
   //Combat.prototype.setupTurns = setupCoriolisTurns;
@@ -148,13 +144,9 @@ Hooks.once("init", async function () {
     return CONFIG.YZECORIOLIS.attributeRolls[attributeKey];
   });
 
-    
-  Handlebars.registerHelper(
-    "getItemTypeName",
-    function (itemTypeKey) {
-      return CONFIG.YZECORIOLIS.itemTypes[itemTypeKey];
-    }
-  );
+  Handlebars.registerHelper("getItemTypeName", function (itemTypeKey) {
+    return CONFIG.YZECORIOLIS.itemTypes[itemTypeKey];
+  });
 
   Handlebars.registerHelper(
     "getTalentCategoryName",
